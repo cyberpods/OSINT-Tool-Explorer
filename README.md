@@ -1,144 +1,201 @@
 # OSINT Tool Explorer
 
-![OSINT Tool Explorer Screenshot](https://via.placeholder.com/800x400?text=OSINT+Tool+Explorer+Screenshot)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![PHP](https://img.shields.io/badge/PHP-7.4+-purple.svg)
+![Python](https://img.shields.io/badge/Python-3.6+-yellow.svg)
 
-A comprehensive, interactive directory of Open Source Intelligence (OSINT) tools sourced from the awesome [jivoi/awesome-osint](https://github.com/jivoi/awesome-osint) repository.
+**Interactive directory of Open Source Intelligence (OSINT) tools with dynamic visualization and smart search capabilities.**
 
-## Features
+[🔗 Live Demo](https://example.com/osint-tool-explorer)
 
-- 🕵️ **Interactive Explorer**: Browse OSINT tools in tree or grid view
-- 🔍 **Smart Search**: Quickly find tools by name, description, or category
-- 🌓 **Dark/Light Mode**: Toggle between color schemes for comfortable viewing
-- 📱 **Responsive Design**: Works on desktop and mobile devices
-- 📋 **Tool Details**: View descriptions and direct links to each tool
-- 🔗 **Easy Sharing**: Share tools via social media or copy URLs
-- ♿ **Accessible**: Built with accessibility best practices
+## 📋 Overview
 
-## Components
+- 🌍 **Comprehensive database** of categorized OSINT tools extracted from curated repositories
+- 🔍 **Dual-view interface** with hierarchical tree and grid layouts for intuitive navigation
+- 🔄 **Light/dark mode** with keyboard shortcuts and accessibility features
 
-### `getdata.py`
+## ✨ Features
 
-This Python script fetches and processes the OSINT tools data from the awesome-osint repository:
+### Core Features
 
-```python
-def fetch_readme():
-    # Fetches the README.md from jivoi/awesome-osint
-    url = 'https://raw.githubusercontent.com/jivoi/awesome-osint/master/README.md'
-    response = requests.get(url)
-    return response.text
+🔍 **Smart Search** - Find tools by name, description, or category with real-time filtering
 
-def parse_markdown(md_text):
-    # Parses the markdown into structured data
-    osint_data = {}
-    current_category = None
-    
-    # Processes headers and tool links
-    for line in md_text.splitlines():
-        # Category detection
-        if header_match := re.match(r'^(#{2,3})\s+(.*)', line):
-            current_category = header_match.group(2).strip()
-            osint_data[current_category] = []
-            
-        # Tool link processing
-        if link_match := re.match(r'^\s*[-*]\s+\[(.+?)\]\((http.*?)\)', line):
-            name = link_match.group(1).strip()
-            url = link_match.group(2).strip()
-            description = link_match.group(3).strip() if link_match.group(3) else ''
-            osint_data[current_category].append({
-                'name': name,
-                'url': url,
-                'description': description
-            })
-    
-    return osint_data
+🌲 **Tree View** - Navigate hierarchical categories with expandable nodes, tool counts, and color coding
+
+🧩 **Grid View** - Browse visual cards with tool descriptions, types, and direct access links
+
+🌓 **Theme Switching** - Toggle between light and dark modes with persistent preferences
+
+🔣 **Keyboard Navigation** - Full keyboard accessibility with documented shortcuts
+
+### Technical Highlights
+
+🛠️ **Dynamic Data Pipeline** - Automatically fetches and parses data from GitHub repositories
+
+🚀 **No Database Required** - Uses JSON for data storage with PHP-based rendering
+
+🔒 **Contact Form** - Secure messaging with CAPTCHA, rate limiting, and email validation
+
+🧠 **JavaScript Tree Integration** - jsTree implementation with custom styling and event handling
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[GitHub OSINT Repository] -->|Python Fetcher| B[JSON Data File]
+    B --> C[PHP Renderer]
+    C --> D[Tree View]
+    C --> E[Grid View]
+    F[User Search] --> C
+    G[Theme Toggle] --> C
+    H[Contact Form] --> I[Email Processing]
 ```
 
-**Key Features:**
-- Automatically fetches the latest data from awesome-osint
-- Parses markdown structure into JSON format
-- Handles categories and subcategories
-- Extracts tool names, URLs, and descriptions
-- Outputs clean JSON data for the web interface
+## 🚀 Installation
 
-### `index.php`
+### Prerequisites
 
-The main web interface that displays the OSINT tools in an interactive explorer:
+- PHP 7.4 or higher
+- Python 3.6+ (for data fetching)
+- Web server (Apache/Nginx)
 
-**Key Features:**
-- Dynamic tree view with collapsible categories
-- Grid view for visual browsing
-- Advanced search functionality
-- Dark/light mode toggle
-- Keyboard navigation support
-- Social sharing capabilities
-- Responsive design for all devices
-- Accessibility features (ARIA labels, keyboard controls)
+### Quick Start
 
-```php
-// Example of how the data is processed for display
-$treeData = [
-    "name" => "OSINT", 
-    "state" => ["opened" => true],
-    "children" => array_map(function($category, $tools) {
-        return [
-            "name" => $category,
-            "children" => array_map(function($tool) {
-                return [
-                    "name" => $tool['name'],
-                    "url" => $tool['url'],
-                    "description" => $tool['description'] ?? ''
-                ];
-            }, $tools)
-        ];
-    }, array_keys($rawData), array_values($rawData))
-];
+```bash
+# Clone the repository
+git clone https://github.com/cyberpods/OSINT-Tool-Explorer.git
+cd OSINT-Tool-Explorer
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Fetch OSINT data
+python getdata.py
+
+# Configure web server to point to the directory
 ```
 
-## Data Source
+### Advanced Setup
 
-All tool data comes from the comprehensive [awesome-osint](https://github.com/jivoi/awesome-osint) repository maintained by @jivoi. This project provides an interactive interface to explore that valuable collection of resources.
+1. **Configure email settings:**
+   Edit `send_contact.php` to update the recipient email address:
 
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/osint-tool-explorer.git
-   cd osint-tool-explorer
+   ```php
+   $to = "your-email@example.com"; // Change to your actual email
    ```
 
-2. Run the data fetcher:
-   ```bash
-   python getdata.py
+2. **Modify hCaptcha settings:**
+   Update the site key in `contact.php` and secret key in `process_contact.php`:
+
+   ```php
+   // In contact.php
+   <div class="h-captcha" data-sitekey="YOUR-SITE-KEY"></div>
+   
+   // In process_contact.php
+   $secret = 'YOUR-SECRET-KEY';
    ```
 
-3. Set up a web server (Apache, Nginx, etc.) to serve the PHP files
+3. **Customize data sources:**
+   Edit `getdata.py` to fetch from additional repositories:
 
-4. Access the interface at `http://localhost/index.php`
+   ```python
+   # Add more URL sources
+   def fetch_readme():
+       urls = [
+           'https://raw.githubusercontent.com/jivoi/awesome-osint/master/README.md',
+           # Add more repository URLs here
+       ]
+       # ...
+   ```
 
-## Requirements
+## 💻 Usage
 
-- Python 3.x (for `getdata.py`)
-- PHP 7.0+ (for web interface)
-- Web server (Apache, Nginx, etc.)
+![OSINT Tool Explorer Screenshot](path/to/screenshot.png)
 
-## Contributing
+### Basic Navigation
 
-Contributions are welcome! Please open issues or pull requests for:
-- New features
-- Bug fixes
-- UI improvements
-- Additional data processing
+- **Search Box**: Type to instantly filter tools
+- **View Toggle**: Switch between tree and grid views
+- **Theme Toggle**: Change between light and dark modes
+- **Tool Cards**: Click to open the tool's website in a new tab
 
-## License
+### Keyboard Shortcuts
 
-MIT License
+| Key       | Action                   |
+|-----------|--------------------------|
+| `/`       | Focus search box         |
+| `V`       | Toggle view (Tree/Grid)  |
+| `D`       | Toggle dark mode         |
+| `?`       | Show keyboard shortcuts  |
+| `Home`    | Back to top              |
+| `↑`/`↓`   | Navigate tree items      |
+| `→`/`←`   | Expand/collapse nodes    |
+| `Enter`   | Open selected tool       |
 
-## Screenshots
+## 📁 Project Structure
 
-![Tree View](https://via.placeholder.com/400x300?text=Tree+View)
-![Grid View](https://via.placeholder.com/400x300?text=Grid+View)
-![Dark Mode](https://via.placeholder.com/400x300?text=Dark+Mode)
+```
+OSINT-Tool-Explorer/
+├── index.php              # Main application file
+├── contact.php            # Contact form page
+├── process_contact.php    # Contact form processing
+├── send_contact.php       # Email sending functionality
+├── getdata.py             # Python script to fetch OSINT data
+├── awesome_osint.json     # Generated data file
+└── requirements.txt       # Python dependencies
+```
 
----
+### Key Files
 
-This project provides an interactive interface to explore the comprehensive collection of OSINT tools from [awesome-osint](https://github.com/jivoi/awesome-osint). The data is automatically fetched and processed, ensuring you always have access to the latest tools and resources.
+- **getdata.py**: Python script that fetches and parses OSINT tool data from GitHub repositories
+- **index.php**: Main application file that renders the tree/grid views and handles user interactions
+- **contact.php**: Contact form with styling and validation
+- **send_contact.php**: Backend processing for contact submissions with rate limiting
+
+## 🤝 Contributing
+
+We welcome contributions to OSINT Tool Explorer! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) file for details.
+
+### Contribution Workflow
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Testing Requirements
+
+- Test PHP changes with PHP 7.4+
+- Verify dark mode functionality
+- Ensure keyboard navigation works
+- Check mobile responsiveness
+
+## 📊 Data Sources
+
+The OSINT Tool Explorer uses data from the following repositories:
+
+- [jivoi/awesome-osint](https://github.com/jivoi/awesome-osint) - A curated list of OSINT resources
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ❓ FAQ
+
+### How often is the tool data updated?
+The data is fetched from GitHub repositories when you run the `getdata.py` script. You can set up a cron job to run this script periodically to keep the data updated.
+
+### Can I add my own OSINT tools?
+Yes! You can either contribute to the source repositories or modify the `awesome_osint.json` file directly with your tools.
+
+### Does this work on mobile devices?
+Yes, the interface is responsive and works on mobile devices. The grid view is especially optimized for smaller screens.
+
+## 🙏 Credits
+
+- [jsTree](https://www.jstree.com/) - jQuery tree plugin
+- [Font Awesome](https://fontawesome.com/) - Icons
+- [hCaptcha](https://www.hcaptcha.com/) - CAPTCHA protection
+- jQuery for DOM manipulation
